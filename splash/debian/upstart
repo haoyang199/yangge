@@ -1,0 +1,32 @@
+start on runlevel [2345]
+stop on runlevel [06]
+
+limit nofile 32768 32768
+env DISPLAY=:0
+respawn
+
+script
+    [ -r /etc/default/splash ] && . /etc/default/splash
+    logdir=${SPLASH_LOGDIR:-/var/log/splash}
+    proxyprofilespath=${SPLASH_PROXYPROFILESPATH:-/etc/splash/proxy-profiles}
+    jsprofilespath=${SPLASH_JSPROFILESPATH:-/etc/splash/js-profiles}
+    filterspath=${SPLASH_FILTERSPATH:-/etc/splash/filters}
+    maxrss=${SPLASH_MAXRSS:-0.75}
+
+    chown proxy:proxy $logdir $proxyprofilespath $cachepath $jsprofilespath $filterspath
+
+    exec start-stop-daemon --start \
+        --chuid proxy:proxy \
+        --make-pidfile \
+        --pidfile /var/run/splash.pid \
+        --exec /usr/bin/python -- \
+            -m splash.server \
+            --maxrss $maxrss \
+            --logfile $logdir/splash.log \
+            --proxy-profiles-path=$proxyprofilespath \
+            --js-profiles-path=$jsprofilespath \
+            --filters-path=$filterspath \
+            --disable-lua \
+            ${SPLASH_OPTS} \
+            >$logdir/splash.out 2>$logdir/splash.err
+end script

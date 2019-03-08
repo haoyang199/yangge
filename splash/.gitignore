@@ -1,0 +1,22 @@
+# distutils/setuptools files
+build
+dist
+splash.egg-info
+docs/_build
+
+# temp files & IDE settings
+_trial_temp
+*.pyc
+.idea
+.ipynb_checkpoints
+.splash-cache*
+.coverage
+env*
+.cache/
+htmlcov/
+
+# IPython notebooks
+/notebooks/
+
+# Dev files
+/dev/
